@@ -10,10 +10,7 @@ stáhnete [zde](https://www.python.org/downloads/release/python-386/).
 
 **Klon repositáře**
 
-```bash
-$ git clone git@gitlab.com:p6753/templates/interactions.py-template.git
-$ git clone https://gitlab.com/p6753/templates/interactions.py-template.git
-```
+![image](https://user-images.githubusercontent.com/46548557/156786634-af09a4da-609b-41f0-9347-13391e4d4466.png)
 
 **Instalace knihoven**
 
