@@ -32,4 +32,4 @@ $ pip install -r requirements.txt
 - spouštěcí soubor: [`bot.py`](bot.py)
 
 ## Ostatní
-- Seznam eventů [zde](discord.com/developers/docs/topics/gateway)
+- Seznam eventů [zde](https://discord.com/developers/docs/topics/gateway)
