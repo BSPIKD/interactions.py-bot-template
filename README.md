@@ -10,7 +10,15 @@ stáhnete [zde](https://www.python.org/downloads/release/python-386/).
 
 **Klon repositáře**
 
+ šablonu použijete pomocí tlačítka, které je nahoře 
+ 
 ![image](https://user-images.githubusercontent.com/46548557/156786634-af09a4da-609b-41f0-9347-13391e4d4466.png)
+
+nebo pomocí příkazu: 
+
+```bash
+$ git clone https://github.com/BSPIKD/interactions.py-bot-template.git
+```
 
 **Instalace knihoven**
 
