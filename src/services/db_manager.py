@@ -4,17 +4,25 @@ import mariadb
 
 
 class Connection:
-    def __init__(self, database=os.getenv("DATABASE")):
+    def __init__(self, database=os.getenv("DATABASE"), select_db=True):
         if database is None:
             database = os.getenv("DATABASE")
 
-        self.conn = mariadb.connect(
-            user=os.getenv('USER'),
-            password=os.getenv('PASSWORD'),
-            host=os.getenv('HOST'),
-            port=int(os.getenv('PORT')),
-            database=database
-        )
+        if select_db:
+            self.conn = mariadb.connect(
+                user=os.getenv('USER'),
+                password=os.getenv('PASSWORD'),
+                host=os.getenv('HOST'),
+                port=int(os.getenv('PORT')),
+                database=database
+            )
+        else:
+            self.conn = mariadb.connect(
+                user=os.getenv('USER'),
+                password=os.getenv('PASSWORD'),
+                host=os.getenv('HOST'),
+                port=int(os.getenv('PORT'))
+            )
         self.cur = self.conn.cursor()
         self.conn.autocommit = True
 

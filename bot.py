@@ -4,6 +4,7 @@ import os
 import interactions
 
 # import core.db.db_connector as db
+import src.models.base_db_script as _base
 from dotenv import load_dotenv
 
 load_dotenv(".env")
@@ -48,16 +49,17 @@ async def on_message_create(message):
 
 
 @bot.event
-async def on_guild_create(guild):
+async def on_guild_create(guild: interactions.Guild):
     """
     Event vykonaný při přidání bota na server, provede se i když se bot zapíná
     :param guild: Discord server
     """
+    _base.apply_server_migrations(guild.id, guild.name)
     print(f"on_guild_create - {guild.name}")
 
 
 @bot.event
-async def on_guild_delete(guild):
+async def on_guild_delete(guild: interactions.Guild):
     """
     Event vykonaný při odstranění bota ze serveru (žádné parametry), celkem nepotřebný event
     :param guild:
@@ -107,6 +109,7 @@ async def on_ready():
     """
     Event vykonaný při zapnutí
     """
+    _base.apply_master_migrations()
     print("on_ready")
 
 
