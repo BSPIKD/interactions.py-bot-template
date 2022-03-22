@@ -24,6 +24,7 @@ class HelloWorld(interactions.Extension):
         :param ctx: Context
         :param sub_command: Pod příkaz
         """
+        # Todo: Napsat metodu pro logování
         await ctx.send(f"Hello, World! - {sub_command}")
 
 
