@@ -1,11 +1,12 @@
 import os
+import io
 from pathlib import Path
 
 import config.conf as cf
 
 
 def open_sql_file(filename):
-    with open(filename, 'r') as f:
+    with io.open(filename, mode='r', encoding='utf-8') as f:
         queries = f.read().split(';')
         del queries[-1]
         return queries
