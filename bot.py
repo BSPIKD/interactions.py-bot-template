@@ -5,6 +5,7 @@ import interactions
 
 # import core.db.db_connector as db
 import src.models.base_db_script as _base
+import src.models.migration as migr
 from dotenv import load_dotenv
 
 load_dotenv(".env")
@@ -29,7 +30,7 @@ logger.addHandler(ch)
 # logger.info('info test')
 # logger.warning('warning test')
 
-bot = interactions.Client(token=os.getenv("TOKEN_DEV"), intents=interactions.Intents.ALL)
+bot = interactions.Client(token=os.getenv("BSPIKD_TEST"), intents=interactions.Intents.ALL)
 
 for filename in os.listdir("./src/cogs"):
     if filename.endswith(".py"):
@@ -54,7 +55,7 @@ async def on_guild_create(guild: interactions.Guild):
     Event vykonaný při přidání bota na server, provede se i když se bot zapíná
     :param guild: Discord server
     """
-    _base.apply_server_migrations(guild.id, guild.name)
+    # _base.apply_server_migrations(guild.id, guild.name)  # Todo: SERVER MIGRACE
     print(f"on_guild_create - {guild.name}")
 
 
@@ -109,7 +110,7 @@ async def on_ready():
     """
     Event vykonaný při zapnutí
     """
-    _base.apply_master_migrations()
+    migr.apply_master_migrations()
     print("on_ready")
 
 
