@@ -27,10 +27,32 @@ def execute_sql_file(filename, database=os.getenv('DATABASE')):
             conn.cur.execute(query)
 
 
-def create_database_if_not_exist(db_name):
+def create_database_if_not_exist(db_name, is_server: bool = False):
+    """
+    Kontrola jestli databáze existuje a pokud ne vytvoří se
+    :param is_server:
+    :param db_name: Název databáze
+    :return: True pokud databáze neexistuje a byla vytvořena jinak False
+    """
+    print(f"-----{db_name}")
+    db = db_name
+    if is_server is True:
+        db = f"{os.getenv('DB_PREFIX')}{db_name}"
+
     with dbs.Connection(select_db=False) as conn:
-        if is_db_exist(db_name) is False:
-            sql = f"create database if not exists `{db_name}`;"
+        if is_db_exist(db) is False:
+            # Databáze neexistuje, je potřeba jí vytvořit
+            sql = f"create database if not exists `{db}`;"
             conn.cur.execute(sql)
+            __create_migration_table(db_name)
             return True
         return False
+
+
+def __create_migration_table(db=os.getenv('DATABASE')):
+    with dbs.Connection(db) as conn:
+        sql = f"""create table _migrations(
+                    name        varchar(255) not null,
+                    `timestamp` timestamp default current_timestamp());"""
+        conn.cur.execute(sql)
+        return True

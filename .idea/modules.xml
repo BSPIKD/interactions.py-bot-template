@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/interactions.py-template.iml" filepath="$PROJECT_DIR$/.idea/interactions.py-template.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/interactions.py-bot-template.iml" filepath="$PROJECT_DIR$/.idea/interactions.py-bot-template.iml" />
     </modules>
   </component>
 </project>

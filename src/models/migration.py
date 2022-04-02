@@ -8,20 +8,21 @@ from termcolor import colored, cprint
 
 
 
-def base_migration(migration_files, db=os.getenv('DATABASE')):
-    # Kontrola jestli db existuje
-    is_db_new = _base.create_database_if_not_exist(db)
+def base_migration(migration_files, db=os.getenv('DATABASE'), is_server: bool = False):
+    # Kontrola a vytvoření databáze jestli neexistuje
+    is_db_new = _base.create_database_if_not_exist(db, is_server)
 
     with dbs.Connection(database=db) as conn:
         if is_db_new is True:
-            # Nahrát všechny migrace do úplně nové databáze
+            # Byla vytvořena nová db, je potřeba nahrát všechny migrace
             for migration in migration_files:
                 basename = os.path.basename(migration)
+                # executnem všechny dotazy v migraci
                 _base.execute_sql_file(filename=migration, database=db)
                 conn.cur.execute('insert into _migrations (`name`) values (?)', (basename,))
                 cprint(f'{db}>> Migrace {basename} byla úspěšně nasazena!', 'green', attrs=['bold'])
         else:
-            # Kontrola a nahrát chybějící migrace
+            # Databáze existuje a je potřeba nahrát nové migrace
             for migration in migration_files:
                 basename = os.path.basename(migration)
                 sql = f"select count(*) from _migrations where name = ?"
@@ -53,19 +54,24 @@ def base_migration(migration_files, db=os.getenv('DATABASE')):
 
 
 def apply_master_migrations():
-    # is_new_run = _base.create_database_if_not_exist(os.getenv('DATABASE'))
-    base_migration(db=os.getenv('DATABASE'), migration_files=h.get_master_migration_files())
+    base_migration(migration_files=h.get_master_migration_files(), db=os.getenv('DATABASE'))
 
 
-# def apply_server_migrations(gid, name):
-#     is_guild_new = False
-#     guild_db_name = f"{os.getenv('DB_PREFIX')}{gid}"
-#     with dbs.Connection() as conn:
-#         sql = f"select count(*) from guilds where id = ?"
-#         conn.cur.execute(sql, (int(gid),))
-#         row = conn.cur.fetchone()
-#         if row[0] < 1:
-#             sql = f"insert into guilds (id, name, db_name) values (?, ?, ?)"
-#             conn.cur.execute(sql, (int(gid), name, guild_db_name))
-#             is_guild_new = _base.create_database_if_not_exist(guild_db_name)
-#     base_migration(db=guild_db_name, is_new_run=is_guild_new, migration_files=h.get_server_migration_files())
+def apply_server_migrations(gid, name):
+    is_guild_new = False
+    guild_db_name = f"{os.getenv('DB_PREFIX')}{gid}"
+
+    base_migration(migration_files=h.get_server_migration_files(), db=gid, is_server=True)
+
+
+    # with dbs.Connection() as conn:
+    #
+    #
+    #     sql = f"select count(*) from guilds where id = ?"
+    #     conn.cur.execute(sql, (int(gid),))
+    #     row = conn.cur.fetchone()
+    #     if row[0] < 1:
+    #         sql = f"insert into guilds (id, name, db_name) values (?, ?, ?)"
+    #         conn.cur.execute(sql, (int(gid), name, guild_db_name))
+    #         is_guild_new = _base.create_database_if_not_exist(guild_db_name)
+    # base_migration(db=guild_db_name, is_new_run=is_guild_new, migration_files=h.get_server_migration_files())
