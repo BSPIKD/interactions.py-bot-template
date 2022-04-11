@@ -1,0 +1,16 @@
+- config_cmds
+
+u každého příkazu kontrolovat
+    práva příkazu (tab. config_cmds):
+        U:
+            - pokračujeme dál
+        A:
+            - kontrola jestli má alespoň ateam roli nebo je označen jako admin (tab. config_admin_roles_users)
+        S:
+            - kontrola jestli má owner roli, nebo je označen jako owner (tab. config_admin_roles_users)
+
+    (správný channel (config))
+        null:
+            - pokračujeme dál
+        channel_id:
+            - kontrola, zda jsme ve správném channel

@@ -56,3 +56,10 @@ def __create_migration_table(db=os.getenv('DATABASE')):
                     `timestamp` timestamp default current_timestamp());"""
         conn.cur.execute(sql)
         return True
+
+
+def get_config(key: str, db: int):
+    with dbs.Connection(db) as conn:
+        sql = f"select value from config where `key` = ?"
+        conn.cur.execute(sql, (key,))
+        return conn.cur.fetchone()[0]

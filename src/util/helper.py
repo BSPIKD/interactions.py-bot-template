@@ -1,6 +1,8 @@
 import os
 import io
 from pathlib import Path
+from termcolor import cprint
+from pyfiglet import figlet_format
 
 import config.conf as cf
 
@@ -35,3 +37,16 @@ def get_master_migration_files():
 
 def get_server_migration_files():
     return get_dir_files(cf.SERVER_MIGRATION, '.sql')
+
+
+def parse_cmd_name(cmd: str):
+    return cmd.replace(' ', '-')
+
+
+def print_info():
+    cprint(figlet_format('Author', font='larry3d'), 'cyan')
+    cprint(figlet_format('Dom-kun#5353', font='standard'), 'red')
+    cprint(figlet_format('Bot', font='larry3d'), 'cyan')
+    cprint(figlet_format('Template v0.1', font='standard'), 'red')
+    cprint(figlet_format('--------', font='larry3d'), 'blue')
+    cprint(figlet_format('BOT IS READY!', font='standard'), 'blue')

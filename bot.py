@@ -1,11 +1,15 @@
+import datetime
 import logging
 import os
 
 import interactions
 
 # import core.db.db_connector as db
-import src.models.base_db_script as _base
-import src.models.migration as mig
+from termcolor import cprint
+
+import src.util.helper as h
+import src.services.migration as mig
+from pyfiglet import figlet_format
 from dotenv import load_dotenv
 
 load_dotenv(".env")
@@ -13,7 +17,7 @@ load_dotenv(".env")
 logger = logging.getLogger("Application")
 logger.setLevel(logging.DEBUG)
 
-fh = logging.FileHandler("logs/default.log")
+fh = logging.FileHandler(f"logs/migration_{datetime.datetime.today().timestamp()}.log")
 fh.setLevel(logging.DEBUG)
 
 ch = logging.StreamHandler()
@@ -55,6 +59,8 @@ async def on_guild_create(guild: interactions.Guild):
     Event vykonaný při přidání bota na server, provede se i když se bot zapíná
     :param guild: Discord server
     """
+    cprint('==========================================================================', 'cyan')
+    cprint(figlet_format('SERVER  MIGRATION', font='small'), 'cyan')
     mig.apply_server_migrations(int(guild.id), guild.name)  # Todo: SERVER MIGRACE
     print(f"on_guild_create - {guild.name}")
 
@@ -110,7 +116,10 @@ async def on_ready():
     """
     Event vykonaný při zapnutí
     """
-    # mig.apply_master_migrations()
+    h.print_info()
+    cprint('===============================================================================', 'magenta')
+    cprint(figlet_format('MASTER  MIGRATION', font='small'), 'magenta')
+    mig.apply_master_migrations()
     print("on_ready")
 
 

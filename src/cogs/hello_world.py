@@ -1,5 +1,7 @@
 import interactions
 
+import src.services.rights as r
+
 
 class HelloWorld(interactions.Extension):
     """
@@ -18,12 +20,22 @@ class HelloWorld(interactions.Extension):
                 type=interactions.OptionType.SUB_COMMAND)
         ],
     )
-    async def hello_world(self, ctx, sub_command: str):
+    async def hello_world(self, ctx: interactions.CommandContext, sub_command: str):
         """
         Ukázka příkazu pomocí cogs
         :param ctx: Context
         :param sub_command: Pod příkaz
         """
+        cmd_name = f'hello-{sub_command}'
+
+        if r.check_cmd_rights(cmd_name, ctx.author, int(ctx.guild_id)) is False:
+            await ctx.send('Nemáte dostatečná práva pro tento příkaz!', ephemeral=True)
+            return
+
+
+        # Todo:
+        #  Zjistit správnost kanálu
+
         await ctx.send(f"Hello, World! - {sub_command}")
 
 
