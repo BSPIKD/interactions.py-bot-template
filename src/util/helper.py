@@ -45,8 +45,8 @@ def parse_cmd_name(cmd: str):
 
 def print_info():
     cprint(figlet_format('Author', font='larry3d'), 'cyan')
-    cprint(figlet_format('Dom-kun#5353', font='standard'), 'red')
+    cprint(figlet_format(cf.__author__, font='standard'), 'red')
     cprint(figlet_format('Bot', font='larry3d'), 'cyan')
-    cprint(figlet_format('Template v0.1', font='standard'), 'red')
+    cprint(figlet_format(f'{cf.__name__} v{cf.__version__}', font='standard'), 'red')
     cprint(figlet_format('--------', font='larry3d'), 'blue')
     cprint(figlet_format('BOT IS READY!', font='standard'), 'blue')

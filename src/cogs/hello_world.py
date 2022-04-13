@@ -26,6 +26,7 @@ class HelloWorld(interactions.Extension):
         :param ctx: Context
         :param sub_command: Pod příkaz
         """
+
         if await r.are_configs_set(ctx, int(ctx.guild_id)) is False:
             return
 
@@ -33,9 +34,13 @@ class HelloWorld(interactions.Extension):
         if await r.is_cmd_exist_or_allowed(ctx, cmd_name, int(ctx.guild_id)) is False:
             return
 
+        # Set command only for server owner
+        # if await r.is_user_su(ctx) is False:
+        #     return
+
+        # Check the rights according to the configuration in the database
         if await r.check_cmd_rights(ctx, cmd_name, ctx.author, int(ctx.guild_id)) is False:
             return
-
 
         # Todo:
         #  Zjistit správnost kanálu

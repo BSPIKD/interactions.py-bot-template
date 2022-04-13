@@ -63,3 +63,45 @@ def get_config(key: str, db: int):
         sql = f"select value from config where `key` = ?"
         conn.cur.execute(sql, (key,))
         return conn.cur.fetchone()[0]
+
+
+def get_cmd_rights(cmd_name: str, db: int):
+    """
+    Get commands user rights by command name
+    :param cmd_name:
+    :param db:
+    :return:
+    """
+    with dbs.Connection(db) as conn:
+        sql = f"select rights from config_cmds where name = ?"
+        conn.cur.execute(sql, (cmd_name,))
+        return conn.cur.fetchone()[0]
+
+
+def __get_cmd_by_name(cmd_name: str, db: int):
+    """
+    Check if command exist in database
+    :param cmd_name:
+    :param db:
+    :return:
+    """
+    with dbs.Connection(db) as conn:
+        sql = f"select * from config_cmds where name = ?"
+        conn.cur.execute(sql, (cmd_name,))
+        data = conn.cur.fetchone()
+        if data is None:
+            return False, False  # Neexistuje
+        else:
+            if int(data[3]) == 1:
+                return True, True  # Existuje a je zapnutý
+            return True, False  # Existuje a je vypnutý
+
+
+def __get_count_of_unset_configs(db: int):
+    with dbs.Connection(db) as conn:
+        sql = f"select * from config where is_important = 1 and value is null"
+        conn.cur.execute(sql)
+        rows = conn.cur.fetchall()
+        if len(rows) > 0:
+            return False, rows
+        return True, None
