@@ -1,3 +1,8 @@
 python-dotenv~=0.19.2
 mariadb==1.0.10
-git+https://github.com/interactions-py/library@unstable
+termcolor==1.1.0
+git+https://github.com/interactions-py/library@stable
+pip~=21.3.1
+wheel~=0.37.1
+setuptools~=60.2.0
+pyfiglet~=0.8.post1

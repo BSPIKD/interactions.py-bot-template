@@ -13,7 +13,6 @@ class Connection:
 
         if select_db:
             self.conn = mariadb.connect(
-
                 user=os.getenv('USER'),
                 password=os.getenv('PASSWORD'),
                 host=os.getenv('HOST'),
@@ -27,7 +26,6 @@ class Connection:
                 host=os.getenv('HOST'),
                 port=int(os.getenv('PORT'))
             )
-
         self.cur = self.conn.cursor()
         self.conn.autocommit = True
 
