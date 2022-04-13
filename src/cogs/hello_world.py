@@ -26,10 +26,14 @@ class HelloWorld(interactions.Extension):
         :param ctx: Context
         :param sub_command: Pod příkaz
         """
-        cmd_name = f'hello-{sub_command}'
+        if await r.are_configs_set(ctx, int(ctx.guild_id)) is False:
+            return
 
-        if r.check_cmd_rights(cmd_name, ctx.author, int(ctx.guild_id)) is False:
-            await ctx.send('Nemáte dostatečná práva pro tento příkaz!', ephemeral=True)
+        cmd_name = f'hello-{sub_command}'
+        if await r.is_cmd_exist_or_allowed(ctx, cmd_name, int(ctx.guild_id)) is False:
+            return
+
+        if await r.check_cmd_rights(ctx, cmd_name, ctx.author, int(ctx.guild_id)) is False:
             return
 
 

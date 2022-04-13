@@ -10,3 +10,5 @@ role_owner = 'owner-role'
 role_main_admin = 'main-admin-role'
 role_admin = 'admin-role'
 role_ateam = 'ateam-role'
+
+err_msg_no_rights = 'Nemáte dostatečná práva pro tento příkaz!'
