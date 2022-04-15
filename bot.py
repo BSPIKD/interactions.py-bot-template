@@ -7,7 +7,7 @@ import interactions
 # import core.db.db_connector as db
 from termcolor import cprint
 
-import src.util.helper as h
+import src.util.helper as _h
 import src.services.migration as mig
 from pyfiglet import figlet_format
 from dotenv import load_dotenv
@@ -116,11 +116,12 @@ async def on_ready():
     """
     Event vykonaný při zapnutí
     """
-    h.print_info()
+    _h.print_info()
     cprint('===============================================================================', 'magenta')
     cprint(figlet_format('MASTER  MIGRATION', font='small'), 'magenta')
     mig.apply_master_migrations()
     print("on_ready")
 
+# Todo: tabulka logs a psát tam logy chyb apod
 
 bot.start()

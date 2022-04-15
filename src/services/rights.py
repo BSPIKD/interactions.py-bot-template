@@ -72,16 +72,15 @@ async def is_cmd_exist_or_allowed(ctx: interactions.CommandContext, cmd_name: st
     return True  # CMD is on and allowed
 
 
-async def are_configs_set(ctx: interactions.CommandContext, db: int):
-    config_set = _base.__get_count_of_unset_configs(int(ctx.guild_id))
+def get_and_check_unset_config(db: int):
+    config_set = _base.__get_count_of_unset_configs(db)
     if config_set[0] is False:
         msg = ''
         for c in config_set[1]:
             msg += f'Není nastaven config `{c[0]}`\n'
             print(f'Není nastaven config {c[0]}')
-        await ctx.send(msg, ephemeral=True)
-        return False
-    return True
+        return False, msg
+    return True, None
 
 
 async def is_user_su(ctx: interactions.CommandContext):

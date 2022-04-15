@@ -1,6 +1,7 @@
 import interactions
 
-import src.services.rights as r
+import src.services.rights as _r
+import src.util.helper as _h
 
 
 class HelloWorld(interactions.Extension):
@@ -27,11 +28,11 @@ class HelloWorld(interactions.Extension):
         :param sub_command: Pod příkaz
         """
 
-        if await r.are_configs_set(ctx, int(ctx.guild_id)) is False:
+        if await _h.are_configs_set(ctx) is False:
             return
 
         cmd_name = f'hello-{sub_command}'
-        if await r.is_cmd_exist_or_allowed(ctx, cmd_name, int(ctx.guild_id)) is False:
+        if await _r.is_cmd_exist_or_allowed(ctx, cmd_name, int(ctx.guild_id)) is False:
             return
 
         # Set command only for server owner
@@ -39,7 +40,7 @@ class HelloWorld(interactions.Extension):
         #     return
 
         # Check the rights according to the configuration in the database
-        if await r.check_cmd_rights(ctx, cmd_name, ctx.author, int(ctx.guild_id)) is False:
+        if await _r.check_cmd_rights(ctx, cmd_name, ctx.author, int(ctx.guild_id)) is False:
             return
 
         # Todo:

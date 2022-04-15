@@ -19,4 +19,7 @@ role_main_admin = 'main-admin-role'
 role_admin = 'admin-role'
 role_ateam = 'ateam-role'
 
+cnl_lvl_up = 'lvl_up_channel'
+cnl_log = 'log_channel'
+
 err_msg_no_rights = 'Nemáte dostatečná práva pro tento příkaz!'
