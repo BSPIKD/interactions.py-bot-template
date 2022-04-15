@@ -7,6 +7,7 @@ __version__ = '0.0.0.1'
 __author__ = "Dom-kun#5353"
 __name__ = 'Template'
 __contact__ = 'mandinec53@gmail.com'
+__author_id__ = 228537418079404033
 
 ROOT_DIR = Path(__file__).parent.parent
 MASTER_MIGRATION = Path.joinpath(ROOT_DIR, 'src', '_migrations', 'master')

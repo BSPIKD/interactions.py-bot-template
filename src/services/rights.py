@@ -85,7 +85,7 @@ def get_and_check_unset_config(db: int):
 
 async def is_user_su(ctx: interactions.CommandContext):
     await ctx.get_guild()
-    if int(ctx.author.id) != int(ctx.guild.owner_id):
+    if int(ctx.author.id) != int(ctx.guild.owner_id) or int(ctx.author.id) != int(_c.__author_id__):
         await ctx.send("Nejsi zakladatel!")
         return False
     return True
