@@ -4,11 +4,11 @@ from pathlib import Path
 from datetime import datetime
 
 import interactions
+from interactions import Member
 from termcolor import cprint
-import src.services.rights as _r
 from pyfiglet import figlet_format
-import src.models.base_db_script as _base
-
+from src.services.permission import Perms
+from src.models.base_db import BaseDb
 import config.conf as _c
 
 
@@ -49,7 +49,7 @@ def parse_cmd_name(cmd: str):
 
 
 def get_unix_timestamp():
-    return int(datetime.now().timestamp());
+    return int(datetime.now().timestamp())
 
 
 def print_info():
@@ -62,33 +62,40 @@ def print_info():
 
 
 async def send_msg_to_cnl(client, cnl_id: int, msg: str):
-    channel = await client._http.get_channel(cnl_id)  # Todo: TO LIVE
-    channel = interactions.Channel(**channel, _client=client._http)
-    await channel.send(msg)
+    # Todo: CRITICAL - když není nastaven config neposílat!
+    try:
+        channel = await client._http.get_channel(cnl_id)  # Todo: TO LIVE
+        channel = interactions.Channel(**channel, _client=client._http)
+        await channel.send(msg)
+    except TypeError:
+        cprint('Nejspíš není nastaven správně config!', 'red')
 
 
-async def send_embed_to_cnl(client, cnl_id: int, embed: str):
+async def send_embed_to_cnl(client, cnl_id: int, embed):
     channel = await client._http.get_channel(cnl_id)
     channel = interactions.Channel(**channel, _client=client._http)
     await channel.send(embeds=embed)
 
 
-async def send_msg_embed_to_cnl(client, cnl_id: int, msg: str, embed: str):
+async def send_msg_embed_to_cnl(client, cnl_id: int, msg: str, embed):
     channel = await client._http.get_channel(cnl_id)
     channel = interactions.Channel(**channel, _client=client._http)
     await channel.send(msg, embeds=embed)
 
 
 async def server_log_msg(client, db: int, msg: str):
-    await send_msg_to_cnl(client, int(_base.get_config(_c.cnl_log, db)), msg)
+    base = BaseDb(database=db)
+    await send_msg_to_cnl(client, int(base.get_config(_c.cnl_log)), msg)
 
 
 async def server_log_embed(client, db: int, embed):
-    await send_embed_to_cnl(client, int(_base.get_config(_c.cnl_log, db)), embed)
+    base = BaseDb(database=db)
+    await send_embed_to_cnl(client, int(base.get_config(_c.cnl_log)), embed)
 
 
 async def server_log_msg_embed(client, db: int, msg: str, embed):
-    await send_msg_embed_to_cnl(client, int(_base.get_config(_c.cnl_log, db)), msg, embed)
+    base = BaseDb(database=db)
+    await send_msg_embed_to_cnl(client, int(base.get_config(_c.cnl_log)), msg, embed)
 
 
 async def get_channel(client, cnl_id):
@@ -103,8 +110,41 @@ async def are_configs_set(ctx):
     :param ctx: interactions.CommandContext or interactions.Channel
     :return:
     """
-    cf = _r.get_and_check_unset_config(int(ctx.guild_id))
+    perms = Perms(database=int(ctx.guild_id))
+    cf = perms.get_and_check_unset_config()
     if not cf[0]:
         await ctx.send(cf[1])
         return False
     return True
+
+
+async def add_role(client, uid: int, role_id: int, db: int):
+    _member = await client._http.get_member(guild_id=db, member_id=uid)
+    member = Member(**_member, _client=client._http)
+    await member.add_role(
+        guild_id=db,
+        role=role_id)
+
+
+async def remove_role(client, uid: int, role_id: int, db: int):
+    _member = await client._http.get_member(guild_id=db, member_id=uid)
+    member = Member(**_member, _client=client._http)
+    await member.remove_role(
+        guild_id=db,
+        role=role_id)
+
+
+def get_today() -> str:
+    now = datetime.now()
+    return now.strftime("%Y-%m-%d %H:%M:%S")
+
+
+def log(msg: str, db: int, color='yellow'):
+    base = BaseDb(database=db)
+    # Todo: nějak ukládat do global current db
+    if int(base.get_config(_c.PRINT_DEBUG)) == 1:
+        if int(base.get_config(_c.PRINT_HIGHLIGHT)) == 1:
+            # print(f'\033[96m{get_today()} {msg} \033[0m')
+            cprint(f'{get_today()} {msg}', color)
+        else:
+            print(f'{get_today()} {msg}')

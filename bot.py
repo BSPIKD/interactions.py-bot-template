@@ -6,11 +6,13 @@ import interactions
 
 # import core.db.db_connector as db
 from termcolor import cprint
-
+import config.conf as _c
 import src.util.helper as _h
 import src.services.migration as mig
 from pyfiglet import figlet_format
 from dotenv import load_dotenv
+from src.services.logs import Log
+
 
 load_dotenv(".env")
 # logging.basicConfig(level=0)
@@ -34,7 +36,9 @@ logger.addHandler(ch)
 # logger.info('info test')
 # logger.warning('warning test')
 
-bot = interactions.Client(token=os.getenv("BSPIKD_TEST"), intents=interactions.Intents.ALL)
+bot = interactions.Client(token=os.getenv("BSPIKD_TEST"),
+                          intents=interactions.Intents.ALL,
+                          disable_sync=_c.disable_sync)
 
 for filename in os.listdir("./src/cogs"):
     if filename.endswith(".py"):
@@ -63,6 +67,10 @@ async def on_guild_create(guild: interactions.Guild):
     cprint(figlet_format('SERVER  MIGRATION', font='small'), 'cyan')
     mig.apply_server_migrations(int(guild.id), guild.name)  # Todo: SERVER MIGRACE
     print(f"on_guild_create - {guild.name}")
+    log = Log(int(guild.id))
+    log.info("něco")
+    log.warning("něco")
+    log.error("něco")
 
 
 @bot.event

@@ -3,27 +3,28 @@ import logging
 
 from pyfiglet import figlet_format
 
-import src.services.db_manager as dbs
 import src.util.helper as h
-import src.models.base_db_script as _base
+from src.models.base_db import BaseDb
 
 from termcolor import colored, cprint
 
+from src.services.db_manager import Connection
 
 
-def base_migration(migration_files, db=os.getenv('DATABASE'), is_server: bool = False):
+def base_migration(migration_files, db=0, is_server: bool = False):
     # Kontrola a vytvoření databáze jestli neexistuje
-    is_db_new = _base.create_database_if_not_exist(db, is_server)
+    base = BaseDb(database=db)
+    is_db_new = base.create_database_if_not_exist(is_server)
 
-    with dbs.Connection(database=db) as conn:
+    with Connection(database=base.db) as conn:
         if is_db_new is True:
             # Byla vytvořena nová db, je potřeba nahrát všechny migrace
             for migration in migration_files:
                 basename = os.path.basename(migration)
                 # executnem všechny dotazy v migraci
-                _base.execute_sql_file(filename=migration, database=db)
+                base.execute_sql_file(filename=migration)
                 conn.cur.execute('insert into _migrations (`name`) values (?)', (basename,))
-                cprint(f'{db}>> Migrace {basename} byla úspěšně nasazena!', 'green', attrs=['bold'])
+                cprint(f'{base.db}>> Migrace {basename} byla úspěšně nasazena!', 'green', attrs=['bold'])
         else:
             # Databáze existuje a je potřeba nahrát nové migrace
             for migration in migration_files:
@@ -31,15 +32,15 @@ def base_migration(migration_files, db=os.getenv('DATABASE'), is_server: bool = 
                 sql = f"select count(*) from _migrations where name = ?"
                 conn.cur.execute(sql, (basename,))
                 if conn.cur.fetchone()[0] < 1:
-                    _base.execute_sql_file(filename=migration, database=db)
+                    base.execute_sql_file(filename=migration)
                     conn.cur.execute('insert into _migrations (`name`) values (?)', (basename,))
-                    cprint(f'{db}> Migrace {basename} byla úspěšně nasazena!', 'green', attrs=['bold'])
+                    cprint(f'{base.db}> Migrace {basename} byla úspěšně nasazena!', 'green', attrs=['bold'])
                 else:
-                    cprint(f'<{db} Migrace {basename} již byla aplikována!', 'yellow')
+                    cprint(f'<{base.db} Migrace {basename} již byla aplikována!', 'yellow')
 
 
 def apply_master_migrations():
-    base_migration(migration_files=h.get_master_migration_files(), db=os.getenv('DATABASE'))
+    base_migration(migration_files=h.get_master_migration_files(), db=0)
 
 
 def apply_server_migrations(gid, name):
